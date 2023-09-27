@@ -2,7 +2,11 @@
 #include <faabric/util/logging.h>
 
 #include <array>
+
+#if defined(__GLIBC__)
 #include <execinfo.h>
+#endif
+
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,13 +27,19 @@ namespace faabric::util {
 void handleCrash(int sig)
 {
     std::array<void*, 32> stackPtrs;
+#if defined(__GLIBC__)
     size_t filledStacks = backtrace(stackPtrs.data(), stackPtrs.size());
+#else
+    size_t filledStacks = 0;
+#endif
     if (sig != TEST_SIGNAL) {
         write(STDERR_FILENO, ABORT_MSG.data(), ABORT_MSG.size());
     }
+#if defined(__GLIBC__)
     backtrace_symbols_fd(stackPtrs.data(),
                          std::min(filledStacks, stackPtrs.size()),
                          STDERR_FILENO);
+#endif
     if (sig != TEST_SIGNAL) {
         signal(sig, SIG_DFL);
         raise(sig);
