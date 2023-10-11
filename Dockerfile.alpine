@@ -1,0 +1,18 @@
+FROM alpine:3.17
+
+# deps
+RUN apk update && apk add binutils git py3-pip boost1.80 clang15-dev curl-dev perl ninja make linux-headers cmake vim bash gcc g++ lld
+
+# conan
+RUN git clone https://github.com/conan-io/conan -b release/1.61 conan-io && cd conan-io && pip install -e . && cd /
+
+# faabric
+RUN git clone https://github.com/ardhipoetra/faabric faabric && mkdir /build/
+WORKDIR /build/
+
+# make n build
+RUN cmake -GNinja -DCMAKE_INSTALL_PREFIX=/build/faabric/install -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_SHARED_LIBS=ON -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+    -DCMAKE_C_COMPILER=/usr/bin/clang -DFAABRIC_USE_SANITISER=None ../faabric
+RUN ninja
+
