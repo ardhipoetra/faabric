@@ -147,7 +147,7 @@ target_link_libraries(faabric_common_dependencies INTERFACE
     Boost::filesystem
     Boost::system
     cppcodec::cppcodec
-    cpprestsdk::cpprestsdk
+    cpprestsdk::cpprest
     flatbuffers::flatbuffers
     hiredis::hiredis
     nng::nng
