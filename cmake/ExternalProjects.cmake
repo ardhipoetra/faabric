@@ -1,5 +1,7 @@
 include(FindGit)
 find_package(Git)
+include(FindOpenSSL)
+find_package(OpenSSL REQUIRED)
 include (ExternalProject)
 include (FetchContent)
 find_package (Threads REQUIRED)
@@ -35,9 +37,9 @@ conan_cmake_configure(
         "abseil/20220623.0@#732381dc99db29b4cfd293684891da56"
         "boost/1.84.0@#7604ce1e7485780469dffb6430f232ea"
         "catch2/2.13.9@#8793d3e6287d3684201418de556d98fe"
-        "flatbuffers/23.5.26@#b153646f6546daab4c7326970b6cd89c"
-        "hiredis/1.0.2@#370dad964286cadb1f15dc90252e8ef3"
-        "openssl/3.0.2@#269fa93e5afe8c34bd9a0030d2b8f0fe"
+        "cppcodec/0.2@#f6385611ce2f7cff954ac8b16e25c4fa"
+	"flatbuffers/23.5.26@#b153646f6546daab4c7326970b6cd89c"
+        "hiredis/1.1.0@#8589b3a9b0f346bf8f370c982090c1bb"
         "protobuf/3.20.0@#8e4de7081bea093469c9e6076149b2b4"
         "readerwriterqueue/1.0.6@#a95c8da3d68822dec4d4c13fff4b5c96"
         "spdlog/1.10.0@#6406c337028e15e56cd6a070cbac54c4"
@@ -60,6 +62,7 @@ conan_cmake_configure(
         boost:without_wave=True
 )
 
+
 conan_cmake_autodetect(FAABRIC_CONAN_SETTINGS)
 
 conan_cmake_install(PATH_OR_REFERENCE .
@@ -81,7 +84,6 @@ find_package(fmt REQUIRED)
 find_package(hiredis REQUIRED)
 # 27/01/2023 - Pin OpenSSL to a specific version to avoid incompatibilities
 # with the system's (i.e. Ubuntu 22.04) OpenSSL
-find_package(OpenSSL 3.0.2 REQUIRED)
 find_package(Protobuf 3.20.0 REQUIRED)
 find_package(readerwriterqueue REQUIRED)
 find_package(spdlog REQUIRED)
@@ -143,6 +145,8 @@ target_link_libraries(faabric_common_dependencies INTERFACE
     absl::strings
     Boost::Boost
     Boost::system
+    cppcodec::cppcodec
+    cpprestsdk::cpprest
     flatbuffers::flatbuffers
     hiredis::hiredis
     nng::nng
