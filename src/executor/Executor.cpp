@@ -24,6 +24,8 @@
 #include <faabric/util/string_tools.h>
 #include <faabric/util/timing.h>
 
+#include <faabric/util/optional.hpp>
+
 // Default snapshot size here is set to support 32-bit WebAssembly, but could be
 // made configurable on the function call or language.
 #define ONE_MB (1024L * 1024L)
@@ -313,19 +315,17 @@ void Executor::threadPoolThread(std::stop_token st, int threadPoolIdx)
     // We terminate these threads by sending a shutdown message, but having this
     // check means they won't hang infinitely if destructed.
     while (!st.stop_requested()) {
-        SPDLOG_TRACE("Thread starting loop {}:{}", id, threadPoolIdx);
 
         ExecutorTask task;
 
-        try {
-            task = threadTaskQueues[threadPoolIdx].dequeue(conf.boundTimeout);
-        } catch (faabric::util::QueueTimeoutException& ex) {
+        if (std::experimental::optional<ExecutorTask> t = threadTaskQueues[threadPoolIdx].dequeue(conf.boundTimeout)) {
+            task = std::move(*t);
+        } else {
             SPDLOG_TRACE(
-              "Thread {}:{} got no messages in timeout {}ms, looping",
-              id,
-              threadPoolIdx,
-              conf.boundTimeout);
-
+                "Thread {}:{} got no messages in timeout {}ms, looping",
+                id,
+                threadPoolIdx,
+                conf.boundTimeout);
             continue;
         }
 
@@ -464,7 +464,6 @@ void Executor::threadPoolThread(std::stop_token st, int threadPoolIdx)
         if (isLastThreadInBatch && doDirtyTracking && isRemoteThread) {
             diffs = mergeDirtyRegions(msg);
         }
-
         // If this is not a threads request and last in its batch, it may be
         // the main function (thread) in a threaded application, in which case
         // we want to stop any tracking and delete the main thread snapshot
