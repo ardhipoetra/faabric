@@ -3,6 +3,7 @@
 #include <faabric/util/exception.h>
 #include <faabric/util/locks.h>
 #include <faabric/util/logging.h>
+#include <faabric/util/optional.hpp>
 
 #include <condition_variable>
 #include <queue>
@@ -46,7 +47,7 @@ class Queue
         }
     }
 
-    T dequeue(long timeoutMs = DEFAULT_QUEUE_TIMEOUT_MS)
+    std::experimental::optional<T> dequeue(long timeoutMs = DEFAULT_QUEUE_TIMEOUT_MS)
     {
         UniqueLock lock(mx);
 
@@ -61,7 +62,8 @@ class Queue
 
             // Work out if this has returned due to timeout expiring
             if (returnVal == std::cv_status::timeout) {
-                throw QueueTimeoutException("Timeout waiting for dequeue");
+                return std::experimental::nullopt;
+                // throw QueueTimeoutException("Timeout waiting for dequeue");
             }
         }
 

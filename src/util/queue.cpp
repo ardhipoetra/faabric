@@ -33,8 +33,11 @@ int TokenPool::getToken()
     if (_size == 0) {
         return -1;
     }
-
-    return queue.dequeue();
+    
+    if (std::experimental::optional<int> t = queue.dequeue())
+        return *t;
+    else
+        return -1;
 }
 
 void TokenPool::releaseToken(int token)
