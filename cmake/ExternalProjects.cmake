@@ -35,10 +35,9 @@ endif()
 conan_cmake_configure(
     REQUIRES
         "abseil/20220623.0@#732381dc99db29b4cfd293684891da56"
-        "boost/1.84.0@#7604ce1e7485780469dffb6430f232ea"
+        "boost/1.79.0@#ef4c89b73ce5d4507e1d764fcebf3bd2"
         "catch2/2.13.9@#8793d3e6287d3684201418de556d98fe"
-        "cppcodec/0.2@#f6385611ce2f7cff954ac8b16e25c4fa"
-	"flatbuffers/23.5.26@#b153646f6546daab4c7326970b6cd89c"
+	    "flatbuffers/23.5.26@#b153646f6546daab4c7326970b6cd89c"
         "hiredis/1.1.0@#8589b3a9b0f346bf8f370c982090c1bb"
         "protobuf/3.20.0@#8e4de7081bea093469c9e6076149b2b4"
         "readerwriterqueue/1.0.6@#a95c8da3d68822dec4d4c13fff4b5c96"
@@ -77,7 +76,7 @@ conan_cmake_install(PATH_OR_REFERENCE .
 include(${CMAKE_CURRENT_BINARY_DIR}/conan_paths.cmake)
 
 find_package(absl REQUIRED)
-find_package(Boost 1.80.0 REQUIRED)
+find_package(Boost 1.79.0 REQUIRED)
 find_package(Catch2 REQUIRED)
 find_package(flatbuffers REQUIRED)
 find_package(fmt REQUIRED)
@@ -145,8 +144,6 @@ target_link_libraries(faabric_common_dependencies INTERFACE
     absl::strings
     Boost::Boost
     Boost::system
-    cppcodec::cppcodec
-    cpprestsdk::cpprest
     flatbuffers::flatbuffers
     hiredis::hiredis
     nng::nng

@@ -4,7 +4,7 @@ FROM alpine:3.17
 RUN apk update && apk add binutils git py3-pip boost1.80 clang15-dev curl-dev perl ninja make linux-headers cmake vim bash gcc g++ lld
 
 # conan
-RUN git clone https://github.com/conan-io/conan -b release/1.61 conan-io && cd conan-io && pip install -e . && cd /
+RUN git clone https://github.com/conan-io/conan -b release/1.63 conan-io && cd conan-io && pip install -e . && cd /
 
 # faabric
 RUN git clone https://github.com/ardhipoetra/faabric faabric && mkdir /build/
